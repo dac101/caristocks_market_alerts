@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Market Alerts</string>
+    <string name="title_activity_alert_form">AlertFormActivity</string>
+</resources>
