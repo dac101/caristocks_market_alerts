@@ -3,7 +3,7 @@ package com.example.marketalerts.api.retrofitmodel
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class InstrumentQuote {
+class Symbol {
     @SerializedName("message")
     @Expose
     var indices: String? = null
