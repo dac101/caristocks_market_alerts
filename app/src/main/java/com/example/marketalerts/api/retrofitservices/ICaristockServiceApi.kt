@@ -12,13 +12,13 @@ import retrofit2.http.*
 
 interface ICaristockServiceApi {
 
-    @GET("api/v1/yf/ticker?symbol")
+    @GET("/v1/yf/ticker?symbol")
     fun get(
         @Query("symbol ") symbol : String
     ): Observable<InstrumentQuote>
 
 
-    @GET("api/v1/yf/symbol")
+    @GET("/v1/yf/symbol")
     fun getSymbol(): Observable<Symbol>
 
 

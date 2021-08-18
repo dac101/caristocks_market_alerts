@@ -6,7 +6,9 @@ import com.google.gson.annotations.SerializedName
 class Symbol {
     @SerializedName("symbol")
     @Expose
-    var symbol: String? = null
+    var symbols: List<String?>? = null
+
+
 
 }
 

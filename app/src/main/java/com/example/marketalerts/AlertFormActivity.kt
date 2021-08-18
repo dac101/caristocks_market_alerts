@@ -29,17 +29,23 @@ class AlertFormActivity : ComponentActivity() {
     private val cristocksService by lazy {
         ICaristockServiceApi.create()
     }
+
+
+    val instrumentList = ArrayList<String>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         var x = cristocksService.getSymbol()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ users ->
+            .subscribe({ symbols ->
 
-                users?.symbol {
+                symbols.symbols?.forEach { it ->
 
-                    entity.activities = entity.activities + it.name
+                    if (it != null) {
+                        this.instrumentList.add(it)
+                    }
                 }
 
                 //users
@@ -53,15 +59,7 @@ class AlertFormActivity : ComponentActivity() {
 
                 },
                 {
-                    ActivityCompat.requestPermissions(
-                        (this as Activity),
-                        arrayOf(
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.INTERNET,
-                            Manifest.permission.ACCESS_COARSE_LOCATION
-                        ),
-                        REQUEST_LOCATION
-                    )
+
 
                     Log.d("retroffit complete", "complete")
 
@@ -77,7 +75,7 @@ class AlertFormActivity : ComponentActivity() {
 
         setContent {
             MarketAlertsTheme {
-                   AlertFormContent()
+                   AlertFormContent(this.instrumentList)
             }
         }
     }
@@ -85,21 +83,21 @@ class AlertFormActivity : ComponentActivity() {
 
 
 @Composable
-fun AlertFormContent() {
+fun AlertFormContent(instrumentList : ArrayList<String>) {
     Scaffold(
         topBar = {
             TopAppBar(title = { Text("Create a New Alert") })
         },
         content = {
 
-            form()
+            form(instrumentList)
 
         }
     )
 }
 
 @Composable
-fun form() {
+fun form(instrumentList : ArrayList<String>) {
     //Text(text = "Hello $name!",     color = MaterialTheme.colors.secondaryVariant, )
         Spacer(modifier = Modifier.width(8.dp))
        Column(modifier = Modifier.fillMaxSize()) {
@@ -109,7 +107,7 @@ fun form() {
             )
 
            Spacer(modifier = Modifier.width(8.dp))
-           InstrumentList()
+           InstrumentList(instrumentList = instrumentList)
            Spacer(modifier = Modifier.width(8.dp))
 
            Text(text = "Enter Price",
@@ -185,16 +183,7 @@ fun DropDownList(
 }
 
 @Composable
-fun InstrumentList() {
-
-
-
-    val countryList = listOf(
-        "United state",
-        "Australia",
-        "Japan",
-        "India",
-    )
+fun InstrumentList( instrumentList : ArrayList<String>) {
     val text = remember { mutableStateOf("") } // initial value
     val isOpen = remember { mutableStateOf(false) } // initial value
     val openCloseOfDropDownList: (Boolean) -> Unit = {
@@ -213,7 +202,7 @@ fun InstrumentList() {
             )
             DropDownList(
                 requestToOpen = isOpen.value,
-                list = countryList,
+                list = instrumentList,
                 openCloseOfDropDownList,
                 userSelectedString
             )
@@ -234,6 +223,11 @@ fun InstrumentList() {
 @Preview
 @Composable
 fun DefaultPreview() {
-
-   form()
+    val arrayList = ArrayList<String>()//Creating an empty arraylist
+    arrayList.add("Ajay")//Adding object in arraylist
+    arrayList.add("Vijay")
+    arrayList.add("Prakash")
+    arrayList.add("Rohan")
+    arrayList.add("Vijay")
+    form(arrayList)
 }
