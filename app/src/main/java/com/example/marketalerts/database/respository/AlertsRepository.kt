@@ -4,17 +4,17 @@ import com.example.marketalerts.database.AlertsDao
 import com.example.marketalerts.database.AppDatabase
 import com.example.marketalerts.database.entities.AlertsEntities
 
-class DiseasesSymptomsRepository (private val diseasesSymptomsDao: AlertsDao) {
+class AlertsRepository (private val dao: AlertsDao) {
 
 
-    fun getAll() = diseasesSymptomsDao.getAll()
+    fun getAll() = dao.getAll()
 
 //    fun getPlant(id: Int) = diseasesSymptomsDao.getById(id)
 //
 //    fun getSymptomsByDisease(disease: String) = diseasesSymptomsDao.getSymptomsByDisease(disease)
 //
-//    suspend fun insert(item: AlertsEntities) {
-//        AppDatabase.databaseWriteExecutor.execute({ diseasesSymptomsDao.insert(item) })
-//    }
+ suspend fun insert(item: AlertsEntities) {
+       AppDatabase.databaseWriteExecutor.execute({ dao.insert(item) })
+    }
 
 }
