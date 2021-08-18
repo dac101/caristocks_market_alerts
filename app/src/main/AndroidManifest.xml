@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.marketalerts">
 
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE " />
 
@@ -13,6 +12,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MarketAlerts">
+        <activity
+            android:name=".TextFieldActivity"
+            android:exported="true"
+            android:label="@string/title_activity_text_field"
+            android:theme="@style/Theme.MarketAlerts.NoActionBar" />
         <activity
             android:name=".AlertFormActivity"
             android:exported="true"

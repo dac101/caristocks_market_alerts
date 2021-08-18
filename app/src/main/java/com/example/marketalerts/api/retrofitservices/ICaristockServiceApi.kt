@@ -1,6 +1,7 @@
 package com.example.marketalerts.api.retrofitservices
 
 import com.example.marketalerts.api.retrofitmodel.InstrumentQuote
+import com.example.marketalerts.api.retrofitmodel.Symbol
 import io.reactivex.Observable
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -11,11 +12,14 @@ import retrofit2.http.*
 
 interface ICaristockServiceApi {
 
-    @GET("v1/yf/ticker?symbol=AAPL")
-    fun getContentRecommend(
+    @GET("api/v1/yf/ticker?symbol")
+    fun get(
         @Query("symbol ") symbol : String
     ): Observable<InstrumentQuote>
 
+
+    @GET("api/v1/yf/symbol")
+    fun getSymbol(): Observable<Symbol>
 
 
     companion object {
