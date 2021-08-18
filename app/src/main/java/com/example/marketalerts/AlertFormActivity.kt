@@ -1,35 +1,83 @@
 package com.example.marketalerts
 
+import android.Manifest
+import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
+import com.example.marketalerts.api.retrofitservices.ICaristockServiceApi
 import com.example.marketalerts.ui.theme.MarketAlertsTheme
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 class AlertFormActivity : ComponentActivity() {
+
+    private val cristocksService by lazy {
+        ICaristockServiceApi.create()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        var x = cristocksService.getSymbol()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ users ->
+
+                users?.symbol {
+
+                    entity.activities = entity.activities + it.name
+                }
+
+                //users
+
+            },
+                { error ->
+                    val params = Bundle()
+                    params.putString("image_name", "GooglePlaceHelper")
+                    params.putString("full_text", error.toString())
+                    Log.d("retroffit error", error.message.toString())
+
+                },
+                {
+                    ActivityCompat.requestPermissions(
+                        (this as Activity),
+                        arrayOf(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.INTERNET,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        ),
+                        REQUEST_LOCATION
+                    )
+
+                    Log.d("retroffit complete", "complete")
+
+                },
+                {
+
+                    Log.d("retroffit subscribe", it.toString())
+                }
+            )
+
+
+
+
         setContent {
             MarketAlertsTheme {
-                // A surface container using the 'background' color from the theme
-
                    AlertFormContent()
-
             }
         }
     }
@@ -40,148 +88,153 @@ class AlertFormActivity : ComponentActivity() {
 fun AlertFormContent() {
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Title") })
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { /*TODO*/ },
-                backgroundColor = Color.Red,
-                content = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_launcher_background),
-                        contentDescription = null,
-                        tint = Color.White
-                    )
-                }
-            )
+            TopAppBar(title = { Text("Create a New Alert") })
         },
         content = {
 
-            form("test")
+            form()
 
         }
     )
 }
 
 @Composable
-fun form(name: String) {
+fun form() {
     //Text(text = "Hello $name!",     color = MaterialTheme.colors.secondaryVariant, )
-
-       Column {
-            Text(text = "alert.author",
+        Spacer(modifier = Modifier.width(8.dp))
+       Column(modifier = Modifier.fillMaxSize()) {
+            Text(text = "Select An Instrument",
                 color = MaterialTheme.colors.secondaryVariant,
                 style = MaterialTheme.typography.h5
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text =" alert.body",
-                style = MaterialTheme.typography.subtitle2,
-                modifier = Modifier
-                    .padding(all = 4.dp)
-                    .fillMaxWidth())
-            Spacer(modifier = Modifier.width(8.dp))
 
-           Text(text = "Price")
+           Spacer(modifier = Modifier.width(8.dp))
+           InstrumentList()
+           Spacer(modifier = Modifier.width(8.dp))
+
+           Text(text = "Enter Price",
+               color = MaterialTheme.colors.secondaryVariant,
+               style = MaterialTheme.typography.h5
+           )
+
            Spacer(modifier = Modifier.width(8.dp))
            val textState = remember { mutableStateOf(TextFieldValue()) }
-           TextField(
+           OutlinedTextField(
                value = textState.value,
                onValueChange = { textState.value = it },
                modifier = Modifier
-                   .fillMaxWidth()
+                   .fillMaxWidth(),
+               keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+
            )
+           hhh
 
-           DropdownDemo()
            Spacer(modifier = Modifier.width(8.dp))
-           dropdown()
+
+
+           SubmitBtn()
+
         }
 
 
 }
 
+@Composable
+fun SubmitBtn() {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+
+        Button(
+            modifier = Modifier.padding(12.dp),
+            onClick = { /* Do something! */ }
+        ) {
+            Text("Button")
+        }
+    }
+}
+
 
 @Composable
-fun DropdownDemo() {
-    var expanded by remember { mutableStateOf(false) }
-    val items = listOf("A", "B", "C", "D", "E", "F")
-    val disabledValue = "B"
-    var selectedIndex by remember { mutableStateOf(0) }
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .wrapContentSize(Alignment.TopStart)) {
-        Text(items[selectedIndex],modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = { expanded = true })
-            .background(
-                Color.Gray
-            ))
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    Color.Red
+fun DropDownList(
+    requestToOpen: Boolean = false,
+    list: List<String>,
+    request: (Boolean) -> Unit,
+    selectedString: (String) -> Unit
+) {
+    DropdownMenu(
+        modifier = Modifier.fillMaxWidth(),
+
+        expanded = requestToOpen,
+        onDismissRequest = { request(false) },
+    ) {
+        list.forEach {
+            DropdownMenuItem(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    request(false)
+                    selectedString(it)
+                }
+            ) {
+                Text(
+                    it,
+                    modifier = Modifier
+                        .wrapContentWidth()
+                      
                 )
-        ) {
-            items.forEachIndexed { index, s ->
-                DropdownMenuItem(onClick = {
-                    selectedIndex = index
-                    expanded = false
-                }) {
-                    val disabledText = if (s == disabledValue) {
-                        " (Disabled)"
-                    } else {
-                        ""
-                    }
-                    Text(text = s + disabledText)
-                }
             }
         }
     }
 }
 
-
 @Composable
-fun dropdown() {
-    var expanded by remember { mutableStateOf(false) }
-    val suggestions = listOf("Item1","Item2","Item3")
-    var selectedText by remember { mutableStateOf("") }
+fun InstrumentList() {
 
 
 
-    Column() {
-        OutlinedTextField(
-            value = selectedText,
-            onValueChange = { selectedText = it },
-            modifier = Modifier.fillMaxWidth(),
-            label = {Text("Label")},
-
+    val countryList = listOf(
+        "United state",
+        "Australia",
+        "Japan",
+        "India",
+    )
+    val text = remember { mutableStateOf("") } // initial value
+    val isOpen = remember { mutableStateOf(false) } // initial value
+    val openCloseOfDropDownList: (Boolean) -> Unit = {
+        isOpen.value = it
+    }
+    val userSelectedString: (String) -> Unit = {
+        text.value = it
+    }
+    Box {
+        Column {
+            OutlinedTextField(
+                value = text.value,
+                onValueChange = { text.value = it },
+                label = { Text(text = "Select Instrument") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            DropDownList(
+                requestToOpen = isOpen.value,
+                list = countryList,
+                openCloseOfDropDownList,
+                userSelectedString
+            )
+        }
+        Spacer(
+            modifier = Modifier
+                .matchParentSize()
+                .background(Color.Transparent)
+                .padding(10.dp)
+                .clickable(
+                    onClick = { isOpen.value = true }
+                )
         )
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            suggestions.forEach { label ->
-                DropdownMenuItem(onClick = {
-                    selectedText = label
-                }) {
-                    Text(text = label)
-                }
-            }
-        }
     }
 }
 
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!",     color = MaterialTheme.colors.secondaryVariant, )
-}
 
 @Preview
 @Composable
 fun DefaultPreview() {
 
-    AlertFormContent()
-
+   form()
 }

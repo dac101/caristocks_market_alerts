@@ -4,21 +4,10 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
 class Symbol {
-    @SerializedName("message")
+    @SerializedName("symbol")
     @Expose
-    var indices: String? = null
+    var symbol: String? = null
 
-    @SerializedName("success")
-    @Expose
-    var get_50day_moving_avg: String? = null
-
-    @SerializedName("success")
-    @Expose
-    var get_200day_moving_avg: String? = null
-
-    @SerializedName("success")
-    @Expose
-    var get_current_price: String? = null
 }
 
 
