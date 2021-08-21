@@ -2,6 +2,7 @@ package com.example.marketalerts.api.retrofitservices
 
 import com.example.marketalerts.api.retrofitmodel.InstrumentQuote
 import com.example.marketalerts.api.retrofitmodel.Symbol
+import com.example.marketalerts.api.retrofitmodel.Symbols
 import io.reactivex.Observable
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -19,7 +20,7 @@ interface ICaristockServiceApi {
 
 
     @GET("/v1/yf/symbol")
-    fun getSymbol(): Observable<Symbol>
+    fun getSymbol(): Observable<Symbols>
 
 
     companion object {

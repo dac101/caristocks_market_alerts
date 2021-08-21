@@ -3,14 +3,12 @@ package com.example.marketalerts.api.retrofitmodel
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class Symbol {
+class Symbols {
     @SerializedName("symbol")
     @Expose
-    public var symbol: String? = null
+    public var symbol: List<Symbol?>? = null
 
-    @SerializedName("market")
-    @Expose
-    public var market: String? = null
+
 
 }
 
