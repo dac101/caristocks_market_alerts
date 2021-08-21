@@ -117,7 +117,8 @@ fun AlertFormContent(instrumentList : ArrayList<String>) {
 @Composable
 fun form(instrumentList : ArrayList<String>) {
 
-       alertEntity: AlertsEntities
+
+
 
        Spacer(modifier = Modifier.width(8.dp))
        Column(modifier = Modifier.fillMaxSize()) {
@@ -148,7 +149,9 @@ fun form(instrumentList : ArrayList<String>) {
 
            Spacer(modifier = Modifier.width(8.dp))
 
+           var alertEntity  = AlertsEntities(
 
+           )
            SubmitBtn()
 
         }
