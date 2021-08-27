@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.example.marketalerts.database.entities.AlertsEntities
 import java.util.concurrent.Executors
 
-@Database(entities = [AlertsEntities::class], version = 0, exportSchema = false)
+@Database(entities = [AlertsEntities::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun alertsDao(): AlertsDao
 

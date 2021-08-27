@@ -29,7 +29,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.launch
 
-private val alertViewModel: AlertViewModel? = null
+private var alertViewModel: AlertViewModel? = null
+private var selectedInstrument : String? = null
 
 suspend fun insertEntity(alertEntity: AlertsEntities,alertViewModel: AlertViewModel ){
     alertViewModel.insert(alertEntity)
@@ -51,7 +52,7 @@ class AlertFormActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        alertViewModel = ViewModelProvider(this).get(AlertViewModel::class.java)
 
 
         var x = cristocksService.getSymbol()
@@ -65,8 +66,6 @@ class AlertFormActivity : ComponentActivity() {
                         it.symbol?.let { it1 -> this.instrumentList.add(it1) }
                     }
                 }
-
-                //users
 
             },
                 { error ->
@@ -116,10 +115,6 @@ fun AlertFormContent(instrumentList : ArrayList<String>) {
 
 @Composable
 fun form(instrumentList : ArrayList<String>) {
-
-
-
-
        Spacer(modifier = Modifier.width(8.dp))
        Column(modifier = Modifier.fillMaxSize()) {
             Text(text = "Select An Instrument",
@@ -150,9 +145,11 @@ fun form(instrumentList : ArrayList<String>) {
            Spacer(modifier = Modifier.width(8.dp))
 
            var alertEntity  = AlertsEntities(
-
+               uid = 0,
+               symbol =  selectedInstrument,
+               price = textState.toString(),
            )
-           SubmitBtn()
+           alertViewModel?.let { SubmitBtn(alertEntity, it) }
 
         }
 
@@ -206,6 +203,7 @@ fun DropDownList(
                 onClick = {
                     request(false)
                     selectedString(it)
+                    selectedInstrument = it.toString()
                 }
             ) {
                 Text(
@@ -219,7 +217,7 @@ fun DropDownList(
     }
 }
 
-@Composable
+        @Composable
 fun InstrumentList( instrumentList : ArrayList<String>) {
     val text = remember { mutableStateOf("") } // initial value
     val isOpen = remember { mutableStateOf(false) } // initial value
@@ -229,6 +227,7 @@ fun InstrumentList( instrumentList : ArrayList<String>) {
     val userSelectedString: (String) -> Unit = {
         text.value = it
     }
+
     Box {
         Column {
             OutlinedTextField(

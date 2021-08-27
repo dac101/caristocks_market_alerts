@@ -7,9 +7,9 @@ import java.util.*
 
 @Entity(tableName = "alerts")
 data class AlertsEntities (
-    @PrimaryKey val uid: Int,
-    @ColumnInfo(name = "Symbol") val Symbol: String?,
+        @PrimaryKey(autoGenerate = true) val uid: Int,
+    @ColumnInfo(name = "Symbol") val symbol: String?,
     @ColumnInfo(name = "price") val price: String? = null,
-    @ColumnInfo(name = "Date") val date: Date? = null
+    @ColumnInfo(name = "Date") val date: String? = null
 
 )
